@@ -8,25 +8,9 @@ import API from "../utils/API";
 class Login extends Component {
  state = {
   email: "",
-  password: ""
- };
-
- componentDidMount() {
-  this.loadUsers();
- }
-
- loadUsers = () => {
-  API.getUsers()
-   .then(res =>
-    this.setState({ Users: res.data, email: "", password: "" })
-   )
-   .catch(err => console.log(err));
- };
-
- deleteUser = id => {
-  API.deleteUser(id)
-   .then(res => this.loadUsers())
-   .catch(err => console.log(err));
+  password: "",
+  redirect: false,
+  route: "/login"
  };
 
  handleInputChange = event => {
@@ -38,16 +22,25 @@ class Login extends Component {
 
  handleFormSubmit = event => {
   event.preventDefault();
+  console.log("Submitting Form ----------------------------------------")
   if (this.state.email && this.state.password) {
-   API.saveUser({
-    email: this.state.email,
-    password: this.state.password
-   })
-    .then(res => this.loadUsers())
+    console.log(this.state)
+    console.log("End State ----------------------------------------")
+   
+   API.login(this.state)
+    .then((newPage) => {
+      console.log(newPage.data)
+      console.log("Made the API Call")
+      this.props.history.push('/trello', { some: 'state' })
+      this.setState({
+        redirect: true,
+        route: newPage.data // Should be /trello
+      })
+    })
     .catch(err => console.log(err));
   }
  };
-
+ 
  render() {
   return (
 
